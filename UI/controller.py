@@ -29,3 +29,18 @@ class Controller:
 
     # Altre Funzioni Event Handler
     # TODO
+    def show_list(self, e):
+        if self._model.get_strumenti() is not None:
+            self._view.lista_strumenti.controls = [ft.Text(f"{i}") for i in self._model.get_strumenti()]
+            # utilizzo di una list comprehension
+        else :
+            self._view.lista_strumenti.controls = [ft.Text("Nessuno strumento da visualizzare, database vuoto")]
+        self._view.update()
+
+    def cerca_per_tipo(self, e):
+        self._tipo_cercato = self._view.input_tipo_strumento.value
+        if self._model.cerca_strumenti_per_tipo(self._tipo_cercato) is not None:
+            self._view.lista_strumenti_ricerca.controls = [ft.Text(f"{i}") for i in self._model.cerca_strumenti_per_tipo(self._tipo_cercato)]
+        else :
+            self._view.lista_strumenti_ricerca.controls = [ft.Text("Nessuno strumento da visualizzare per il tipo da lei inserito")]
+        self._view.update()

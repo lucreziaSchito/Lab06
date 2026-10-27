@@ -36,6 +36,26 @@ class DepositoStrumenti:
             :return: una lista con tutti gli strumenti presenti oppure None
         """
         # TODO
+        self._lista_strumenti = []
+        connessione = get_connection()
+        cursore_dizionario = connessione.cursor(dictionary=True)
+        # Il parametro dictionary=True modifica il formato con cui il modulo mysql-connector-python
+        # restituisce i risultati delle query, trasformando ogni riga estratta in un dizionario Python
+        # anziché nella classica tupla.
+
+        query = """SELECT * FROM strumento"""
+        cursore_dizionario.execute(query)
+
+
+        for riga in cursore_dizionario:
+            strumento_estratto = Strumento(riga["codice"], riga["tipo"], riga["marca"], riga["anno_acquisto"], riga["valore"])
+            self._lista_strumenti.append(strumento_estratto)
+        connessione.close()
+
+        if len(self._lista_strumenti) > 0:
+            return self._lista_strumenti
+        else :
+            return None
 
     def cerca_strumenti_per_tipo(self, tipo) -> list[Strumento] | None:
         """
@@ -44,3 +64,23 @@ class DepositoStrumenti:
             :return: una lista con tutti gli strumenti del tipo indicato oppure None
         """
         # TODO
+        self._lista_strumenti_ord_tipo = []
+        connessione = get_connection()
+        cursore_dizionario = connessione.cursor(dictionary=True)
+
+        query = f"""SELECT * 
+                FROM strumento
+                WHERE tipo = %s"""
+        cursore_dizionario.execute(query, (tipo, ))
+
+
+        for riga in cursore_dizionario:
+            strumento_estratto = Strumento(riga["codice"], riga["tipo"], riga["marca"], riga["anno_acquisto"],
+                                           riga["valore"])
+            self._lista_strumenti_ord_tipo.append(strumento_estratto)
+        connessione.close()
+
+        if len(self._lista_strumenti_ord_tipo) > 0:
+            return self._lista_strumenti_ord_tipo
+        else :
+            return None
